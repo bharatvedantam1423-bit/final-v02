@@ -43,8 +43,9 @@
   // Show a text wordmark if an exported asset is missing.
   row.querySelectorAll("img[data-fallback]").forEach((img) => {
     const markMissing = () => img.parentElement.classList.add("is-missing");
-    if (img.complete && img.naturalWidth === 0) markMissing();
-    else img.addEventListener("error", markMissing, { once: true });
+    img.addEventListener("error", markMissing, { once: true });
+    // a load that already failed before this script ran
+    if (img.complete && img.currentSrc && img.naturalWidth === 0 && !img.src.endsWith(".svg")) markMissing();
   });
 
   const setActive = (card) => {

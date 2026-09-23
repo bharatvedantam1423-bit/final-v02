@@ -6,7 +6,8 @@ All exported from the Figma file **CCBP-v02** (section `938:1666`).
 | --- | --- | --- |
 | `academy-logo.png` | `938:275` (2x PNG) | Academy logo, all states |
 | `intensive-logo.png` | `938:1023` (original image fill) | Intensive logo, all states |
-| `niat-logo.svg` | `938:1312` (SVG) | NIAT logo, default and expanded |
+| `niat-logo.svg` | `938:1312` (SVG) | NIAT logo, expanded card |
+| `niat-logo-card.svg` | `938:1559` (SVG) | NIAT logo, default card |
 | `niat-shield.svg` | `938:1395` (SVG) | NIAT shield, collapsed tab |
 | `*-default.webp` | `938:1478`, `938:1555`, `938:1550` | Photo in the default card |
 | `*-collapsed.webp` | `938:1383`, `938:1388`, `938:1393` | Photo in the collapsed tab |
