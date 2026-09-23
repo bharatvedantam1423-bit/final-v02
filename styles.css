@@ -302,15 +302,30 @@ svg {
   background: rgba(255, 255, 255, 0.85);
 }
 
-.programme__caption,
-.programme__expand {
-  transition: opacity 0.3s ease 0.3s, transform 0.4s var(--ease);
+.programme__caption {
+  transition: opacity 0.3s ease 0.3s;
 }
 
-.programmes__row.has-active .programme__caption,
-.programmes__row.has-active .programme__expand {
+.programmes__row.has-active .programme__caption {
   opacity: 0;
   transition-delay: 0s;
+}
+
+/* The expand button stays on the collapsed tabs, centred, to show they can open */
+.programme__expand {
+  transition:
+    right var(--dur) var(--ease),
+    transform 0.4s var(--ease),
+    background-color 0.3s ease;
+}
+
+.programmes__row.has-active .programme__expand {
+  right: calc(50% - 23px);
+}
+
+.programmes__row.has-active .programme:not(.is-active):hover .programme__expand {
+  transform: scale(1.08);
+  background: rgba(255, 255, 255, 0.85);
 }
 
 /* --------------------------------------------------------------------------
@@ -723,7 +738,7 @@ svg {
   .programmes__row.has-active .programme--niat:not(.is-active) .logo-full { opacity: 1; }
   .programmes__row.has-active .programme--niat:not(.is-active) .logo-mark { opacity: 0; }
   .programmes__row.has-active .programme:not(.is-active) .programme__caption,
-  .programmes__row.has-active .programme:not(.is-active) .programme__expand { opacity: 1; }
+  .programmes__row.has-active .programme:not(.is-active) .programme__expand { opacity: 1; right: 12px; }
 
   .programme__photo--default,
   .programmes__row.has-active .programme:not(.is-active) .programme__photo--default {
