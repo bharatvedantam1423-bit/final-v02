@@ -165,41 +165,39 @@ svg {
   transition-duration: 0.25s;
 }
 
-/* Photo — position values are the Figma offsets from the card's centre. */
+/* Photos are the Figma exports, already cropped to the visible card area,
+   so they sit on the card's bottom edge. Default and collapsed crops cross-fade. */
 .programme__photo {
   position: absolute;
-  left: calc(50% + var(--ph-x));
-  top: var(--ph-y);
-  width: var(--ph-w);
-  height: var(--ph-h);
+  bottom: 0;
+  left: 50%;
+  height: auto;
   transform: translateX(-50%);
-  transition:
-    left var(--dur) var(--ease),
-    top var(--dur) var(--ease),
-    width var(--dur) var(--ease),
-    height var(--dur) var(--ease);
+  transform-origin: bottom center;
+  transition: opacity 0.45s ease, transform 0.6s var(--ease);
 }
 
-.programme__photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: bottom;
-  filter: grayscale(1);
-  transition: filter 0.5s ease, transform 0.6s var(--ease);
+.programme__photo--default {
+  width: calc(var(--w-default) - 2px);
 }
 
-.programmes__row:not(.has-active) .programme:hover .programme__photo img {
-  transform: scale(1.03);
+/* soften the top edge where the photo's background meets the card tint */
+.programme__photo {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 90px);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 90px);
 }
 
-.programme--academy   { --ph-x: -72.1px;  --ph-y: 158.3px; --ph-w: 595.3px; --ph-h: 523.2px; }
-.programme--intensive { --ph-x: -45.9px;  --ph-y: 166.3px; --ph-w: 789.2px; --ph-h: 406.3px; }
-.programme--niat      { --ph-x: -78.5px;  --ph-y: 147px;   --ph-w: 645.6px; --ph-h: 539.1px; }
+.programme__photo--collapsed {
+  width: calc(var(--w-collapsed) - 2px);
+  opacity: 0;
+}
 
-.programmes__row.has-active .programme--academy   { --ph-x: -56.2px;  --ph-y: 224px;   --ph-w: 446px;   --ph-h: 392px; }
-.programmes__row.has-active .programme--intensive { --ph-x: -131.8px; --ph-y: 219px;   --ph-w: 732.4px; --ph-h: 377.1px; }
-.programmes__row.has-active .programme--niat      { --ph-x: -68.75px; --ph-y: 225.3px; --ph-w: 608.2px; --ph-h: 507.8px; }
+.programmes__row.has-active .programme__photo--default { opacity: 0; }
+.programmes__row.has-active .programme__photo--collapsed { opacity: 1; transition-delay: 0.15s; }
+
+.programmes__row:not(.has-active) .programme:hover .programme__photo--default {
+  transform: translateX(-50%) scale(1.03);
+}
 
 .programme__fade {
   position: absolute;
@@ -230,6 +228,12 @@ svg {
 .programme__logo img {
   width: 100%;
   height: auto;
+}
+
+/* the Academy logo export has a white background; multiply drops it onto the tint */
+.programme__logo,
+.detail__logo {
+  mix-blend-mode: multiply;
 }
 
 .programme--academy   { --logo-w: 199px;   --logo-y: 41px; }
@@ -341,10 +345,9 @@ svg {
 
 .detail__photo {
   position: absolute;
-  left: var(--dp-l);
-  top: var(--dp-t);
+  left: 0;
+  bottom: 0;
   width: var(--dp-w);
-  aspect-ratio: var(--dp-ratio);
   transform: translateY(24px) scale(1.04);
   transform-origin: bottom center;
   transition: transform 0.9s var(--ease);
@@ -352,9 +355,7 @@ svg {
 
 .detail__photo img {
   width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: bottom;
+  height: auto;
   filter: grayscale(1);
   transition: filter 0.8s ease 0.15s;
 }
@@ -367,10 +368,10 @@ svg {
   filter: none;
 }
 
-/* Photo placement relative to the 751px media panel */
-.programme--academy   { --dp-l: 0%;     --dp-t: 125.2px; --dp-w: 96.65%;  --dp-ratio: 725.86 / 637.97; }
-.programme--intensive { --dp-l: -6.03%; --dp-t: 198.5px; --dp-w: 122.94%; --dp-ratio: 1625.7 / 837; }
-.programme--niat      { --dp-l: -1.81%; --dp-t: 210.6px; --dp-w: 96.61%;  --dp-ratio: 1024 / 855; }
+/* Export width as a share of the 751px media panel (cropped by Figma at the panel edges) */
+.programme--academy   { --dp-w: 96.67%; }
+.programme--intensive { --dp-w: 100%; }
+.programme--niat      { --dp-w: 94.81%; }
 
 .detail__fade {
   position: absolute;
@@ -447,6 +448,8 @@ svg {
 .programme--intensive .detail__logo img { width: 260.2px; }
 .programme--niat .detail__logo img { width: 331px; }
 
+.programme--intensive .detail__text { --text-w: 232px; }
+
 .detail__brand {
   display: flex;
   flex-direction: column;
@@ -493,7 +496,7 @@ svg {
 
 .detail__text {
   margin: 0;
-  max-width: 300px;
+  max-width: var(--text-w, 300px);
   font-size: 16px;
   line-height: 1.2;
   color: #000;
@@ -695,7 +698,7 @@ svg {
   .programmes__row.has-active .programme.is-active {
     flex: none;
     width: 100%;
-    height: 240px;
+    height: 360px;
     transition: height var(--dur) var(--ease), border-color 0.4s ease;
   }
 
@@ -722,13 +725,17 @@ svg {
   .programmes__row.has-active .programme:not(.is-active) .programme__caption,
   .programmes__row.has-active .programme:not(.is-active) .programme__expand { opacity: 1; }
 
-  .programme__photo,
-  .programmes__row.has-active .programme .programme__photo {
-    left: 50%;
-    top: 90px;
-    width: 420px;
-    height: 360px;
+  .programme__photo--default,
+  .programmes__row.has-active .programme:not(.is-active) .programme__photo--default {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    object-position: center top;
+    opacity: 1;
   }
+
+  .programme__photo--collapsed,
+  .programmes__row.has-active .programme__photo--collapsed { display: none; }
 
   .programme__caption { width: 70%; }
 
@@ -760,9 +767,7 @@ svg {
   .programme--academy,
   .programme--niat,
   .programme--intensive {
-    --dp-l: -5%;
-    --dp-t: 150px;
-    --dp-w: 110%;
+    --dp-w: 100%;
   }
 
   .detail__panel {
