@@ -99,4 +99,23 @@
       if (row.contains(document.activeElement)) document.activeElement.blur();
     }
   });
+
+  // Open the first card when the row scrolls into view; reset when it leaves
+  // so the reveal plays again next time. Skipped on the stacked mobile layout,
+  // where expanding a card mid-scroll would shift the page.
+  let autoTimer;
+  new IntersectionObserver(
+    ([entry]) => {
+      clearTimeout(autoTimer);
+      if (stacked.matches) return;
+      if (entry.isIntersecting) {
+        autoTimer = setTimeout(() => {
+          if (!row.classList.contains("has-active")) setActive(cards[0]);
+        }, 250);
+      } else if (!row.contains(document.activeElement)) {
+        setActive(null);
+      }
+    },
+    { threshold: 0.6 }
+  ).observe(row);
 })();
